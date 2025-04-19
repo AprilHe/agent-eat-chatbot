@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Assistant</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background: #4285F4;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-header h1 {
+            font-size: 1.5rem;
+        }
+        
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 400px;
+        }
+        
+        .message {
+            padding: 0.8rem 1rem;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .bot-message {
+            background-color: #E3F2FD;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .user-message {
+            background-color: #E8F5E9;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+        }
+        
+        #user-input {
+            flex-grow: 1;
+            padding: 0.8rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 24px;
+            outline: none;
+            font-size: 1rem;
+        }
+        
+        #send-button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 0.8rem 1.5rem;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        #send-button:hover {
+            background-color: #3367d6;
+        }
+        
+        .typing-indicator {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: #E3F2FD;
+            border-radius: 18px;
+            margin-bottom: 0.5rem;
+            align-self: flex-start;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background-color: #4285F4;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 3px;
+            animation: typing 1s infinite ease-in-out;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+        
+        @keyframes typing {
+            0% { opacity: 0.3; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-5px); }
+            100% { opacity: 0.3; transform: translateY(0); }
+        }
+        
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .option-button {
+            background-color: #E3F2FD;
+            border: 1px solid #BBDEFB;
+            border-radius: 16px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .option-button:hover {
+            background-color: #BBDEFB;
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-left: 8px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        @media (max-width: 640px) {
+            .chat-container {
+                margin: 0;
+                border-radius: 0;
+                height: 100vh;
+            }
+            .chat-messages {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h1>Delivery Assistant</h1>
+            <div class="mode-toggle">
+                <span>Guided Conversation</span>
+                <label class="switch">
+                    <input type="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span>Free Conversation</span>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages will be displayed here -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Enter your message..." autocomplete="off">
+            <button id="send-button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // 聊天流程控制
+        const chatFlow = {
+            currentStep: 0,
+            questions: [
+                {
+                    text: "Hello! I'm your AI assistant. Nice to meet you! What's your name?",
+                    field: "name"
+                },
+                {
+                    text: "What type of flavors do you prefer?",
+                    field: "taste",
+                    options: ["Strong", "Light", "Spicy", "Savory", "Sweet & Sour"]
+                },
+                {
+                    text: "What types of food do you like? (You can list multiple)",
+                    field: "favoriteFoods"
+                },
+                {
+                    text: "Are there any foods you dislike or want to avoid?",
+                    field: "dislikedFoods"
+                },
+                {
+                    text: "Do you have any food allergies? If yes, please specify.",
+                    field: "allergies"
+                },
+                {
+                    text: "What's your expected price range per meal?",
+                    field: "priceRange",
+                    options: ["£10-20", "£20-40", "£40-60", "£60-100", "Above £100"]
+                },
+                {
+                    text: "When would you prefer your delivery?",
+                    field: "deliveryTime",
+                    options: ["Breakfast (7:00-9:00)", "Lunch (11:00-13:00)", "Dinner (17:00-19:00)"]
+                },
+                {
+                    text: "What's your postal code and delivery address?",
+                    field: "address"
+                },
+                {
+                    text: "How many people are dining?",
+                    field: "numberOfDiners"
+                },
+                {
+                    text: "Great! I've noted down your preferences. I'll provide personalized recommendations based on this information. Now we can chat freely. What would you like to know?",
+                    options: null
+                }
+            ],
+            userData: {
+                name: "",
+                taste: "",
+                favoriteFoods: "",
+                dislikedFoods: "",
+                allergies: "",
+                priceRange: "",
+                deliveryTime: "",
+                numberOfDiners: "1",
+                address: ""
+            }
+        };
+
+        // 对话模式
+        let isFreeMode = false;
+
+        // 用于存储对话历史的数组
+        let conversationHistory = [];
+
+        // DOM元素
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const modeToggle = document.getElementById('mode-toggle');
+
+        // 后端API配置
+        const API_CONFIG = {
+            url: "http://localhost:5001/api/chat", // 修改为您的后端API地址
+            headers: {
+                "Content-Type": "application/json"
+            }
+        };
+
+        // 事件监听器
+        document.addEventListener('DOMContentLoaded', () => {
+            // 开始对话
+            setTimeout(() => {
+                botAsk(chatFlow.questions[0].text);
+            }, 500);
+            
+            // 发送按钮点击事件
+            sendButton.addEventListener('click', handleUserInput);
+            
+            // 输入框回车事件
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    handleUserInput();
+                }
+            });
+            
+            // Mode toggle
+            modeToggle.addEventListener('change', () => {
+                isFreeMode = modeToggle.checked;
+                if (isFreeMode && chatFlow.currentStep < chatFlow.questions.length) {
+                    addMessage("Now we are switching to free conversation mode. You can ask me any questions!", 'bot');
+                } else if (!isFreeMode && chatFlow.currentStep >= chatFlow.questions.length) {
+                    addMessage("Now we are switching to guided conversation mode. I will ask you some questions to understand you.", 'bot');
+                    // Reset conversation flow
+                    chatFlow.currentStep = 0;
+                    chatFlow.userData = {name: "", interest: "", frequency: "", specificInterest: ""};
+                    conversationHistory = [];
+                    botAsk(chatFlow.questions[0].text);
+                }
+            });
+        });
+
+        // 处理用户输入
+        function handleUserInput() {
+            const message = userInput.value.trim();
+            if (message.length === 0) return;
+            
+            // 显示用户消息
+            addMessage(message, 'user');
+            userInput.value = '';
+            
+            // 保存用户消息到对话历史
+            conversationHistory.push({ role: "user", content: message });
+            
+            if (isFreeMode) {
+                // 自由对话模式：调用大语言模型API
+                sendToLLM(message);
+            } else {
+                // 引导式对话模式：保存用户回答
+                saveUserAnswer(message);
+                
+                // 机器人继续对话
+                setTimeout(() => {
+                    continueConversation();
+                }, 1000);
+            }
+        }
+
+        // 保存用户回答
+        function saveUserAnswer(message) {
+            switch(chatFlow.currentStep) {
+                case 0:
+                    chatFlow.userData.name = message;
+                    break;
+                case 1:
+                    chatFlow.userData.interest = message;
+                    break;
+                case 2:
+                    chatFlow.userData.frequency = message;
+                    break;
+                case 3:
+                    chatFlow.userData.specificInterest = message;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // 机器人提问
+        function botAsk(question) {
+            // 替换模板变量
+            let processedQuestion = question
+                .replace('{{name}}', chatFlow.userData.name)
+                .replace(/{{interest}}/g, chatFlow.userData.interest);
+            
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                removeTypingIndicator();
+                addMessage(processedQuestion, 'bot');
+                
+                // Save assistant message to conversation history
+                conversationHistory.push({ role: "assistant", content: processedQuestion });
+                
+                // If current question has options, display option buttons
+                const currentQuestion = chatFlow.questions[chatFlow.currentStep];
+                if (currentQuestion && currentQuestion.options) {
+                    addOptions(currentQuestion.options);
+                }
+            }, 1500);
+        }
+
+        // Continue conversation
+        function continueConversation() {
+            chatFlow.currentStep++;
+            
+            if (chatFlow.currentStep < chatFlow.questions.length) {
+                botAsk(chatFlow.questions[chatFlow.currentStep].text);
+            } else {
+                // 引导式对话结束，切换到自由对话模式
+                isFreeMode = true;
+                modeToggle.checked = true;
+            }
+        }
+
+        // 发送消息到大语言模型API
+        async function sendToLLM(message) {
+            showTypingIndicator();
+            
+            try {
+                // 构建请求数据
+                const requestData = {
+                    messages: conversationHistory,
+                    user_info: chatFlow.userData
+                };
+                
+                // 发送请求
+                const response = await fetch(API_CONFIG.url, {
+                    method: "POST",
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API错误: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // 显示机器人响应
+                removeTypingIndicator();
+                addMessage(data.response, 'bot');
+                
+                // 保存机器人响应到对话历史
+                conversationHistory.push({ role: "assistant", content: data.response });
+                
+            } catch (error) {
+                console.error("API request failed:", error);
+                removeTypingIndicator();
+                addMessage("Sorry, I cannot connect to the language model service right now. Please try again later or check your network connection.", 'bot');
+                
+                // Add local fallback functionality (optional)
+                // If API request fails, use simple local responses
+                // fallbackResponse(message);
+            }
+        }
+        
+        // Local fallback response functionality (optional)
+        function fallbackResponse(message) {
+            const lowercaseMsg = message.toLowerCase();
+            let response = "I'm sorry, I can only provide limited responses right now. Please try connecting to the full service later.";
+            
+            if (lowercaseMsg.includes("hello") || lowercaseMsg.includes("hi")) {
+                response = "Hello! Nice to chat with you.";
+            } else if (lowercaseMsg.includes("thank")) {
+                response = "You're welcome! Happy to help!";
+            } else if (lowercaseMsg.includes("bye")) {
+                response = "Goodbye! Looking forward to our next conversation.";
+            }
+            
+            addMessage(response, 'bot');
+            conversationHistory.push({ role: "assistant", content: response });
+        }
+
+        // 显示打字指示器
+        function showTypingIndicator() {
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing-indicator';
+            typingIndicator.id = 'typing-indicator';
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(typingIndicator);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 移除打字指示器
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        // 添加消息到聊天界面
+        function addMessage(text, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${sender}-message`;
+            messageElement.textContent = text;
+            
+            chatMessages.appendChild(messageElement);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // 添加选项按钮
+        function addOptions(options) {
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'options-container';
+            
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.addEventListener('click', () => {
+                    // 当用户点击选项时
+                    userInput.value = option;
+                    handleUserInput();
+                    optionsContainer.remove();
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+            
+            chatMessages.appendChild(optionsContainer);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    </script>
+</body>
+</html>
