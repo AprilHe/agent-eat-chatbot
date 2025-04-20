@@ -1,3 +1,4 @@
-flask
-openai
-python-dotenv
+flask==3.1.0
+flask-cors==5.0.1
+openai==1.75.0
+python-dotenv==1.1.0
