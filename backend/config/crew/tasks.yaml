@@ -1,0 +1,6 @@
+assistant_task:
+  description: >
+    Respond to the user's message: {user_message}. Consider their food preferences and requirements.
+    Use the provided conversation history for context: {context}.
+  expected_output: >
+    A personalized food recommendation response that addresses the user's query and provides specific restaurant or dish suggestions.

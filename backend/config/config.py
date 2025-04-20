@@ -7,7 +7,7 @@ load_dotenv()
 # API configuration
 class Config:
     # Flask settings
-    PORT = int(os.getenv("PORT", 5001))
+    PORT = int(os.getenv("PORT", 5002))
     DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
     
     # OpenAI settings

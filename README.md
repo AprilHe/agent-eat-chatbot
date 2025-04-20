@@ -18,6 +18,7 @@ agent-eat-chatbot/
 │   ├── config/            # Configuration files
 │   ├── routes/            # API routes
 │   ├── utils/             # Utility functions
+│   ├── crew/              # CrewAI implementation
 │   ├── .env               # Environment variables
 │   └── app.py             # Main application
 └── requirements.txt       # Python dependencies
@@ -57,9 +58,9 @@ Step-by-step instructions on how to install and set up the project locally:
 
 1. After starting the backend server, the application is accessible at:
 
-   - Main interface: http://localhost:5001/
-   - Legacy interface: http://localhost:5001/chatbot.html
-   - Health check: http://localhost:5001/health
+   - Main interface: http://localhost:5002/
+   - Legacy interface: http://localhost:5002/chatbot.html
+   - Health check: http://localhost:5002/health
 
 2. Start a conversation with the chatbot:
 
@@ -73,13 +74,22 @@ Step-by-step instructions on how to install and set up the project locally:
 - **Guided Conversation Mode**: The chatbot asks specific questions to understand your preferences.
 - **Free Conversation Mode**: Chat freely about food recommendations.
 - **Preference Storage**: Your preferences are stored during the session and used to personalize recommendations.
+- **Memory System**: The chatbot remembers past interactions using Mem0 and vector storage.
+- **CrewAI Integration**: Uses CrewAI framework for advanced conversational capabilities.
 - **Responsive Design**: Works well on both desktop and mobile devices.
+
+## Technology Stack
+
+- **Frontend**: HTML, CSS, JavaScript
+- **Backend**: Flask (Python)
+- **AI**: CrewAI, OpenAI, Mem0 for memory
+- **Storage**: ChromaDB for vector storage
 
 ## API Endpoints
 
 - `GET /`: Serves the main chatbot interface
 - `GET /health`: Health check endpoint
-- `POST /api/chat`: Chat API endpoint that connects to OpenAI
+- `POST /api/chat`: Chat API endpoint that connects to CrewAI
 
 ## Contributing
 
