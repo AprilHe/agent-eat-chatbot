@@ -1,0 +1,15 @@
+[pypi]
+publish_url = "https://upload.pypi.org/legacy/"
+
+[venv]
+python_path = ".venv/bin/python"
+venv_path = ".venv"
+
+[cache]
+dir = ".uv/cache"
+
+[resolution]
+target-python = "3.9"
+
+[default-environment]
+name = "agent-eat-chatbot" 
