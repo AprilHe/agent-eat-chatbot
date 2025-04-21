@@ -1,0 +1,75 @@
+[build-system]
+requires = ["hatchling>=1.21.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "agent-eat-chatbot"
+version = "0.1.0"
+description = "A conversational chatbot with modern web interface"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [
+    { name = "Agent Eat Team" }
+]
+dependencies = [
+    "crewai>=0.25.2",
+    "fastapi>=0.103.0",
+    "flask>=3.1.0",
+    "flask-cors>=5.0.1",
+    "mem0ai<=0.1.93",
+    "openai>=1.75.0",
+    "python-dotenv>=1.1.0",
+    "uvicorn>=0.23.2",
+    "pydantic>=2.3.0",
+    "chromadb>=0.4.18",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.scripts]
+agent-eat-chatbot = "run:main"
+agent-eat-cli = "backend.run:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend", "frontend", "shared"]
+
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+select = ["E", "F", "B", "I"]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+
+[tool.hatch.envs.default]
+python = "3.12"
+features = ["dev"]
+post-install-commands = [
+    "mkdir -p data/chroma_db",
+    "python -c \"import os; open('.env', 'a').close() if not os.path.exists('.env') else None\""
+]
+
+[tool.hatch.envs.dev]
+dependencies = [
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+]
+
+[tool.hatch.envs.test]
+dependencies = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+] 

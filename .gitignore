@@ -24,10 +24,13 @@ var/
 venv/
 ENV/
 mychatenv/
+.venv/
 
 # Environment Variables
-backend/.env
 .env
+.env.local
+.env.*.local
+**/.env
 
 # IDE
 .idea/
@@ -39,4 +42,15 @@ backend/.env
 .DS_Store
 Thumbs.db
 
-.venv/
+# Data and logs
+data/chroma_db/
+logs/
+*.log
+
+# Jupyter notebooks
+.ipynb_checkpoints
+*.ipynb
+
+# Project specific
+*.db
+*.sqlite3
