@@ -1,0 +1,47 @@
+restaurant_selection:
+  description: >
+    Recommend the most suitable restaurants based on the following user information:
+    - Location: {postal_code} {street_address}
+    - Dietary Preferences:
+      * Taste preferences (e.g., spicy, salty)
+      * Preferred food types
+      * Disliked food types
+      * Allergies
+    - Budget: {budget}
+    - Delivery time: {delivery_time}
+    - Number of people: 1
+    
+    Consider factors including: restaurant ratings, delivery time, price range, cuisine type, etc.
+  expected_output: >
+    A list of 3-5 most suitable restaurant recommendations, each containing:
+    - Restaurant name and rating
+    - Signature dishes
+    - Estimated delivery time
+    - Price range
+  agent: order_assistant
+
+order_processing:
+  description: >
+    Process the user's specific order requirements with the following information:
+    - Location: {postal_code} {street_address}
+    - Dietary Preferences:
+      * Taste preferences (e.g., spicy, salty)
+      * Preferred food types
+      * Disliked food types
+      * Allergies
+    - Budget: {budget}
+    - Delivery time: {delivery_time}
+    - Number of people: 1
+    
+    Tasks include:
+    - Confirm selected restaurant and dishes
+    - Handle special requests (e.g., allergies, taste preferences)
+    - Calculate total price and delivery fee
+    - Confirm delivery address and time
+  expected_output: >
+    A complete order confirmation containing:
+    - Order details (restaurant, dishes, quantities)
+    - Special request notes
+    - Price breakdown
+    - Estimated delivery time
+  agent: order_processor
