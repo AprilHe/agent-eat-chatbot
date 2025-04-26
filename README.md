@@ -92,6 +92,15 @@ cp .env.example .env
 # Edit .env with your API keys including OPENAI_API_KEY
 ```
 
+5. Build the frontend:
+
+```bash
+cd frontend/src/ui
+npm install
+npm run build
+cd ../../..  # Return to project root
+```
+
 ## Running the Application
 
 ### Web Interface
