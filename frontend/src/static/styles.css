@@ -315,6 +315,21 @@ body {
 
 .message.assistant {
     align-self: flex-start;
+    margin-left: 40px;
+    position: relative;
+}
+
+.message.assistant::before {
+    content: '';
+    position: absolute;
+    left: -36px;
+    top: 8px;
+    width: 28px;
+    height: 28px;
+    background-image: url('/images/chatbot.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .message.system-message {

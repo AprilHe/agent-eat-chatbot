@@ -1,47 +1,90 @@
-restaurant_selection:
+assistant_task:
   description: >
-    Recommend the most suitable restaurants based on the following user information:
-    - Location: {postal_code} {street_address}
-    - Dietary Preferences:
-      * Taste preferences (e.g., spicy, salty)
-      * Preferred food types
-      * Disliked food types
-      * Allergies
-    - Budget: {budget}
-    - Delivery time: {delivery_time}
-    - Number of people: 1
+    As AgentEats, respond to the user's message: {user_message}. Use their conversation history {context} to personalize your response. 
     
-    Consider factors including: restaurant ratings, delivery time, price range, cuisine type, etc.
-  expected_output: >
-    A list of 3-5 most suitable restaurant recommendations, each containing:
-    - Restaurant name and rating
-    - Signature dishes
-    - Estimated delivery time
-    - Price range
-  agent: order_assistant
+    Focus on helping them with food delivery across three platforms (UberEats, Deliveroo, Just Eat). For new users or when information is missing, collect information through a step-by-step conversation flow:
 
-order_processing:
-  description: >
-    Process the user's specific order requirements with the following information:
-    - Location: {postal_code} {street_address}
-    - Dietary Preferences:
-      * Taste preferences (e.g., spicy, salty)
-      * Preferred food types
-      * Disliked food types
-      * Allergies
-    - Budget: {budget}
-    - Delivery time: {delivery_time}
-    - Number of people: 1
-    
-    Tasks include:
-    - Confirm selected restaurant and dishes
-    - Handle special requests (e.g., allergies, taste preferences)
-    - Calculate total price and delivery fee
-    - Confirm delivery address and time
+    INFORMATION COLLECTION SEQUENCE:
+    1. First Interaction - Delivery Address:
+       - Ask ONLY for postcode first
+       - Once provided, ask for street address
+       - Then ask to name this address (e.g., "Would you like to save this as 'home' or 'work'?")
+       - Finally, ask if they want to add another address
+       Wait for user response between each question.
+
+    2. Food Safety (only proceed after address is confirmed):
+       - First ask about any food allergies
+       - Then ask about dietary restrictions (Vegetarian, Halal, Gluten-free)
+       Wait for user response between each question.
+
+    3. Food Preferences (only proceed after safety info is confirmed):
+       - Ask about preferred food flavors (e.g., "Do you enjoy spicy food?")
+       - Ask about favorite cuisines
+       - Ask about strongly disliked foods or cuisines
+       Wait for user response between each question.
+
+    4. Order Parameters (only proceed after preferences are confirmed):
+       - Ask about price range
+       - Ask about delivery timing needs
+       - Ask about number of people eating
+       Wait for user response between each question.
+
+    IMPORTANT GUIDELINES:
+    - Ask only ONE question at a time
+    - Wait for user's response before moving to the next question
+    - Confirm each piece of information before moving forward
+    - Store each confirmed piece of information
+    - Use casual, friendly language for questions
+    - If user provides multiple pieces of information in one response, acknowledge and confirm each piece
+    - If user changes the subject, note any missing information to collect later
+
+    Once sufficient information is collected, collaborate with the browser_agent to find and compare options.
+
   expected_output: >
-    A complete order confirmation containing:
-    - Order details (restaurant, dishes, quantities)
-    - Special request notes
-    - Price breakdown
-    - Estimated delivery time
-  agent: order_processor
+    A conversational response that:
+    1. Asks exactly ONE question at a time
+    2. Acknowledges user's previous answer
+    3. Confirms understanding of provided information
+    4. Clearly indicates what information is being asked for next
+    5. Maintains a friendly, casual tone
+    6. Provides recommendations only when sufficient information is collected
+    7. References specific user preferences in recommendations
+
+browser_task:
+  description: >
+    Using the browser toolkit, search and compare food delivery options based on the user's preferences and requirements.
+    
+    Input information includes:
+    - Postcode: {postcode}
+    - Dietary restrictions: {dietary_restrictions}
+    - Cuisine preferences: {cuisine_preferences}
+    - Maximum delivery time: {max_delivery_time}
+    - Price range: {price_range}
+    
+    Tasks:
+    1. Search all platforms (UberEats, Deliveroo, Just Eat) for available restaurants
+    2. Filter results based on:
+       - Dietary restrictions (must match exactly)
+       - Delivery time constraints
+       - Price range
+       - Cuisine preferences
+    3. Compare prices and delivery times
+    4. Find active deals and promotions
+    5. Verify menu items against dietary requirements
+    
+    Return the top 3 recommendations with:
+    - Restaurant name and platform
+    - Delivery time and cost
+    - Available deals
+    - Menu highlights
+    - Dietary compliance confirmation
+    - Total cost estimate
+    
+  expected_output: >
+    A detailed comparison of the best available options, including:
+    1. Top 3 recommendations with clear reasoning
+    2. Price comparisons across platforms
+    3. Delivery time estimates
+    4. Available deals and promotions
+    5. Confirmation of dietary requirement compliance
+    6. Total cost breakdown
