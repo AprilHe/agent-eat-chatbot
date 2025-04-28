@@ -3,10 +3,22 @@ from crewai.project import CrewBase, agent, crew, task
 import os
 import sys
 from pathlib import Path
-from backend.crew.src.latest_ai_development.tools import synthetic_food_search
+from crewai.tools import tool
+import asyncio
+from .uber_eats_scraper import scrape_ubereats
 
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).parent.parent.parent))
+
+
+
+@tool("Postal Code Food Search")
+def postal_code_food_search(postal_code: str, keywords: str) -> list:
+    """Search for food given a postal code and keywords, returning real Uber Eats results."""
+    # loop = asyncio.get_event_loop()
+    results = "tofu"#loop.run_until_complete(scrape_ubereats(postal_code, keywords))
+    return results 
+
 
 @CrewBase
 class ChatbotCrew:
@@ -21,7 +33,7 @@ class ChatbotCrew:
         return Agent(
             config=self.agents_config["assistant"],
             verbose=True,
-            tools=[synthetic_food_search],
+            tools=[postal_code_food_search],
         )
 
     @task
