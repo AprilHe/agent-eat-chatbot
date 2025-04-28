@@ -25,6 +25,7 @@ dependencies = [
     "chromadb>=0.4.18",
     "camel-ai[web_tools]",
     "browser-use>=0.1.41",
+    "nest-asyncio>=1.6.0",
 ]
 
 [project.optional-dependencies]

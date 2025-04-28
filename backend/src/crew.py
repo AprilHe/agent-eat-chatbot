@@ -5,19 +5,42 @@ import sys
 from pathlib import Path
 from crewai.tools import tool
 import asyncio
+import threading
 from .uber_eats_scraper import scrape_ubereats
 
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 
+@tool("FoodSearch")
+def food_search(postal_code: str, keywords: str) -> list:
+    """Search for food given a postal code and keywords, returning real deliveroo results.
+    """
+    results = []
+    error = None
 
-@tool("Postal Code Food Search")
-def postal_code_food_search(postal_code: str, keywords: str) -> list:
-    """Search for food given a postal code and keywords, returning real Uber Eats results."""
-    # loop = asyncio.get_event_loop()
-    results = "tofu"#loop.run_until_complete(scrape_ubereats(postal_code, keywords))
-    return results 
+    def run_in_thread():
+        nonlocal results, error
+        try:
+            # Create and manage a new event loop for this thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            results = loop.run_until_complete(scrape_ubereats(postal_code, keywords))
+            loop.close()
+        except Exception as e:
+            print(f"Error in scraper thread: {e}")
+            error = e
+
+    # Create and start the thread
+    thread = threading.Thread(target=run_in_thread)
+    thread.start()
+    thread.join() # Wait for the thread to complete
+
+    if error:
+        # Return an error indication if the thread failed
+        return [{ "error": f"Failed to get results due to an error in the scraper: {error}" }]
+    else:
+        return results
 
 
 @CrewBase
@@ -33,7 +56,7 @@ class ChatbotCrew:
         return Agent(
             config=self.agents_config["assistant"],
             verbose=True,
-            tools=[postal_code_food_search],
+            tools=[food_search],
         )
 
     @task
@@ -50,5 +73,5 @@ class ChatbotCrew:
             agents=self.agents,
             tasks=self.tasks,
             process=Process.sequential,
-            verbose=0,
+            verbose=True,
         )
