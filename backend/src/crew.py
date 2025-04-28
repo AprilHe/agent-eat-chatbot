@@ -25,8 +25,8 @@ class ChatbotCrew:
     """Agent Eat Chatbot crew"""
 
     # Use relative paths for config files
-    agents_config = os.path.join(Path(__file__).parent.parent, "config/agents.yaml")
-    tasks_config = os.path.join(Path(__file__).parent.parent, "config/tasks.yaml")
+    agents_config = os.path.join(Path(__file__).parent.parent, "src/config/agents.yaml")
+    tasks_config = os.path.join(Path(__file__).parent.parent, "src/config/tasks.yaml")
 
     @agent
     def assistant(self) -> Agent:
@@ -43,6 +43,9 @@ class ChatbotCrew:
     @crew
     def crew(self) -> Crew:
         """Creates the chatbot crew"""
+
+        print("Registered tools:", self.assistant().tools)
+
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
