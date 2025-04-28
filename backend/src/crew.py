@@ -3,6 +3,7 @@ from crewai.project import CrewBase, agent, crew, task
 import os
 import sys
 from pathlib import Path
+from backend.crew.src.latest_ai_development.tools import synthetic_food_search
 
 # Add project root to sys.path
 sys.path.append(str(Path(__file__).parent.parent.parent))
@@ -20,6 +21,7 @@ class ChatbotCrew:
         return Agent(
             config=self.agents_config["assistant"],
             verbose=True,
+            tools=[synthetic_food_search],
         )
 
     @task

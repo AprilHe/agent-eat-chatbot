@@ -309,7 +309,7 @@ async def serve_react_app(full_path: str):
     <!DOCTYPE html>
     <html>
     <head>
-        <title>CrewAI Chat UI</title>
+        <title>Agent Eat Chatbot</title>
         <style>
             body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }
             h1 { color: #333; }
@@ -318,7 +318,7 @@ async def serve_react_app(full_path: str):
         </style>
     </head>
     <body>
-        <h1>CrewAI Chat UI</h1>
+        <h1>Agent Eat Chatbot</h1>
         <div class="message">
             <p>The UI assets have not been built yet. You can build them by running:</p>
             <pre>cd src/crewai_chat_ui/ui && npm install && npm run build</pre>

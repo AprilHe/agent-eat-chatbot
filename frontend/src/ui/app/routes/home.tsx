@@ -3,8 +3,8 @@ import ChatLayout from "./chat";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "CrewAI Chat UI" },
-    { name: "description", content: "Welcome to CrewAI Chat UI" },
+    { title: "Agent Eat Chatbot" },
+    { name: "description", content: "Welcome to Agent Eat Chatbot" },
   ];
 }
 
