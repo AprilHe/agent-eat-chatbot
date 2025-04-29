@@ -1,21 +1,25 @@
 assistant_task:
   description: >
     Respond conversationally to the user's message ({user_message}) based on the history ({context}). 
-    Help them find food delivery. 
+    Help them find food delivery and assist with payment. 
     
-    **TOOL RULE:** You have a `FoodSearch` tool.
-    - **DO NOT USE** the tool unless you have confirmed **BOTH** the user's postcode AND the specific food keywords they want.
+    **TOOL RULE:** You have a `FoodSearch` tool and a `PayOrder` tool.
+    - **DO NOT USE** the `FoodSearch` tool unless you have confirmed **BOTH** the user's postcode AND the specific food keywords they want.
     - If you need the tool but lack postcode or keywords, ask for the missing information first (postcode first, then keywords).
     - Only use the tool with the confirmed postcode and keywords.
+    - After presenting food options, if the user wants to place an order, confirm the order and payment method before using the `PayOrder` tool.
+    - Only use the `PayOrder` tool after the user has selected an order and provided payment details.
     
     General Guidelines:
     - Ask one question at a time.
     - Be friendly and confirm information.
     - If a search is needed, collect postcode and keywords before using `FoodSearch`.
+    - If payment is needed, confirm the order and payment method before using `PayOrder`.
   # Removed detailed info collection sequence and guidelines to simplify
   expected_output: >
     A friendly, conversational response. 
     - If postcode and keywords are confirmed, the response **MUST** be the direct result of calling the `FoodSearch` tool with those details.
     - If postcode or keywords are missing, the response **MUST** ask for the missing information (postcode first, then keywords).
+    - If the user wants to place an order, confirm the order and payment method, then use the `PayOrder` tool and present the result.
     - Otherwise, continue the conversation naturally.
 
