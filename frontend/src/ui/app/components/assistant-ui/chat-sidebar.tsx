@@ -144,7 +144,14 @@ export const ChatSidebar = ({ children }: ChatSidebarProps) => {
     <>
       <aside className="flex h-full w-64 flex-col bg-background border-r">
         <div className="flex items-center justify-between p-4">
-          <h2 className="text-lg font-semibold">Agent Eat Chatbot</h2>
+          <div className="flex items-center gap-2">
+            <img
+              src="/images/logo-bw.svg"
+              alt="Agent Eat Logo"
+              style={{ width: 32, height: 32 }}
+            />
+            <span className="text-lg font-semibold">Agent Eat</span>
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -177,7 +184,11 @@ export const ChatSidebar = ({ children }: ChatSidebarProps) => {
           </Select>
         </div>
 
-        <Button onClick={handleNewChat} className="mx-4 mb-4">
+        <Button
+          onClick={handleNewChat}
+          className="mx-4 mb-4"
+          style={{ background: "#5774CD", color: "#fff" }}
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Chat
         </Button>

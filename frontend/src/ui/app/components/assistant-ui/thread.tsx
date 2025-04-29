@@ -73,9 +73,7 @@ const ThreadWelcome: FC = () => {
     <ThreadPrimitive.Empty>
       <div className="flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
         <div className="flex w-full flex-grow flex-col items-center justify-center">
-          <p className="mt-4 font-medium">
-            How can I help you today?
-          </p>
+          <p className="mt-4 font-medium">How can I help you today?</p>
         </div>
       </div>
     </ThreadPrimitive.Empty>
@@ -175,12 +173,25 @@ const EditComposer: FC = () => {
 const AssistantMessage: FC = () => {
   return (
     <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-4">
-      <div className="text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
-        <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+      <div className="flex items-start col-span-2 col-start-2 row-start-1 my-1.5">
+        <img
+          src="/images/bot.svg"
+          alt="Bot"
+          style={{ width: 32, height: 32, marginRight: 12 }}
+        />
+        <div
+          className="text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7"
+          style={{
+            background: "#5774CD",
+            color: "#fff",
+            borderRadius: 16,
+            padding: "12px 16px",
+          }}
+        >
+          <MessagePrimitive.Content components={{ Text: MarkdownText }} />
+        </div>
       </div>
-
       <AssistantActionBar />
-
       <BranchPicker className="col-start-2 row-start-2 -ml-2 mr-2" />
     </MessagePrimitive.Root>
   );
@@ -220,7 +231,10 @@ const BranchPicker: FC<BranchPickerPrimitive.Root.Props> = ({
   return (
     <BranchPickerPrimitive.Root
       hideWhenSingleBranch
-      className={cn("text-muted-foreground inline-flex items-center text-xs", className)}
+      className={cn(
+        "text-muted-foreground inline-flex items-center text-xs",
+        className
+      )}
       {...rest}
     >
       <BranchPickerPrimitive.Previous asChild>
